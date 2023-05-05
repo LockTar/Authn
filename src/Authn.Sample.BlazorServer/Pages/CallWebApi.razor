@@ -1,0 +1,75 @@
+@page "/callwebapi"
+
+@using Microsoft.Identity.Abstractions;
+@using Microsoft.Identity.Web
+
+@inject IDownstreamApi downstreamAPI
+@inject MicrosoftIdentityConsentAndConditionalAccessHandler ConsentHandler
+
+<h1>Call an API</h1>
+
+<p>This component demonstrates fetching data from a Web API.</p>
+
+@if (apiResult == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h2>API Result</h2>
+    @apiResult
+
+    <h2>API Result2</h2>
+    @apiResult2
+}
+
+@code {
+    private HttpResponseMessage response;
+    private string apiResult;
+    private string apiResult2;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await CallApi();
+            await CallApi2();
+        }
+        catch (Exception ex)
+        {
+            ConsentHandler.HandleException(ex);
+        }
+    }
+
+    private async Task CallApi()
+    {
+        response = await downstreamAPI.CallApiForUserAsync(
+            "DownstreamApi1",
+            options => options.RelativePath = "");
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            apiResult = await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            apiResult = "Failed to call the web API";
+        }
+    }
+
+    private async Task CallApi2()
+    {
+        response = await downstreamAPI.CallApiForUserAsync(
+            "DownstreamApi2",
+            options => options.RelativePath = "");
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            apiResult2 = await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            apiResult2 = "Failed to call the web API";
+        }
+    }
+}

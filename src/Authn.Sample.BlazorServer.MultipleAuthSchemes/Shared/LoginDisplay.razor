@@ -1,9 +1,40 @@
-﻿<AuthorizeView>
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+<AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity?.Name!
-        <a href="MicrosoftIdentity/Account/SignOut">Log out</a>
+
+        <a href="@logoutUrl">Log out</a>
     </Authorized>
     <NotAuthorized>
-        <a href="MicrosoftIdentity/Account/SignIn">Log in</a>
+        <a href="MicrosoftIdentity/Account/SignIn/@Program.B2cOpenIdConnectScheme">Log in klant</a>
+        <a href="MicrosoftIdentity/Account/SignIn/@Program.AadOpenIdConnectScheme">Log in medewerker</a>
     </NotAuthorized>
 </AuthorizeView>
+
+
+@code {
+    private string logoutUrl = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+        {
+            var scheme = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+
+            string domainUrl = HttpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContextAccessor.HttpContext.Request.Host;
+
+            switch (scheme)
+            {
+                case Program.B2cOpenIdConnectScheme:
+                    logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.B2cOpenIdConnectScheme}";
+                    break;
+                case Program.AadOpenIdConnectScheme:
+                    logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.AadOpenIdConnectScheme}";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scheme));
+            }
+        }
+    }
+}

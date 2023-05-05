@@ -1,5 +1,6 @@
 using Authn.Sample.BlazorServer.MultipleAuthSchemes.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -7,17 +8,57 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using System.Security.Claims;
 
 namespace Authn.Sample.BlazorServer.MultipleAuthSchemes;
 public class Program
 {
+    public const string B2cOpenIdConnectScheme = "OpenIdConnectB2c";
+    public const string AadOpenIdConnectScheme = "OpenIdConnectAad";
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+        // As described here: https://github.com/AzureAD/microsoft-identity-web/wiki/multiple-authentication-schemes#cookie-schemes
+        var authenticationBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme); 
+
+        authenticationBuilder.AddCookie(options =>
+        {
+            ////options.ExpireTimeSpan = new TimeSpan(7, 0, 0, 0);
+
+            // Default login path to customers because for employees we get a hidden login page
+            options.LoginPath = "/MicrosoftIdentity/Account/SignIn/" + B2cOpenIdConnectScheme;
+
+            options.Events = new CookieAuthenticationEvents()
+            {
+                OnSigningIn = async context =>
+                {
+                    var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+
+                    var authScheme = context.Properties.Items.Where(k => k.Key == ".AuthScheme").Single();
+                    var authSchemeClaim = new Claim(authScheme.Key, authScheme.Value);
+                    claimsIdentity.AddClaim(authSchemeClaim);
+
+                    await Task.CompletedTask;
+                }
+            };
+        });
+
+        builder.Services.AddAuthentication()
+            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), Program.AadOpenIdConnectScheme, null)
+            .EnableTokenAcquisitionToCallDownstreamApi()
+            .AddDownstreamApi("DownstreamApi1", builder.Configuration.GetSection("DownstreamApi1"))
+            .AddDownstreamApi("DownstreamApi2", builder.Configuration.GetSection("DownstreamApi2"))
+                .AddInMemoryTokenCaches();
+
+        builder.Services.AddAuthentication()
+            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"), Program.B2cOpenIdConnectScheme, null)
+            .EnableTokenAcquisitionToCallDownstreamApi()
+            .AddDownstreamApi("DownstreamApi1", builder.Configuration.GetSection("DownstreamApi1"))
+            .AddDownstreamApi("DownstreamApi2", builder.Configuration.GetSection("DownstreamApi2"))
+                .AddInMemoryTokenCaches();
+
         builder.Services.AddControllersWithViews()
             .AddMicrosoftIdentityUI();
 

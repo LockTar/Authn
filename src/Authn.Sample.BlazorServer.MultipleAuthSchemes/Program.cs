@@ -68,6 +68,8 @@ public class Program
             options.FallbackPolicy = options.DefaultPolicy;
         });
 
+        builder.Services.AddHttpContextAccessor();
+
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor()
             .AddMicrosoftIdentityConsentHandler();

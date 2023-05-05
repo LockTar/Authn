@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.Api2", "Authn.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.BlazorServer", "Authn.Sample.BlazorServer\Authn.Sample.BlazorServer.csproj", "{443FA417-3644-4A89-9C1E-D7C4FE2682BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.BlazorServer.MultipleAuthSchemes", "Authn.Sample.BlazorServer.MultipleAuthSchemes\Authn.Sample.BlazorServer.MultipleAuthSchemes.csproj", "{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{443FA417-3644-4A89-9C1E-D7C4FE2682BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{443FA417-3644-4A89-9C1E-D7C4FE2682BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{443FA417-3644-4A89-9C1E-D7C4FE2682BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

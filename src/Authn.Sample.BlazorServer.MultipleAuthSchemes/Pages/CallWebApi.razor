@@ -35,7 +35,7 @@ else
         try
         {
             await CallApi();
-            //await CallApi2();
+            await CallApi2();
         }
         catch (Exception ex)
         {
@@ -48,10 +48,10 @@ else
         response = await downstreamAPI.CallApiForUserAsync(
             "DownstreamApi1",
             options =>
-                {
-                    options.RelativePath = "";
-                    options.AcquireTokenOptions.AuthenticationOptionsName = Program.AadOpenIdConnectScheme; // Doesn't help... Somewhere the custom scheme is ignored and wants to use the default 'OpenIdConnect'
-                });
+            {
+                options.RelativePath = "";
+                options.AcquireTokenOptions.AuthenticationOptionsName = Program.AadOpenIdConnectScheme; // Doesn't help... Somewhere the custom scheme is ignored and wants to use the default 'OpenIdConnect'
+            });
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -67,7 +67,11 @@ else
     {
         response = await downstreamAPI.CallApiForUserAsync(
             "DownstreamApi2",
-            options => options.RelativePath = "");
+            options =>
+            {
+                options.RelativePath = "";
+                options.AcquireTokenOptions.AuthenticationOptionsName = Program.AadOpenIdConnectScheme; // Doesn't help... Somewhere the custom scheme is ignored and wants to use the default 'OpenIdConnect'
+            });
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {

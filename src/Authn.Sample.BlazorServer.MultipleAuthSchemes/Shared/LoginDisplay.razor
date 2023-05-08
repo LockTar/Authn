@@ -1,6 +1,4 @@
-﻿@inject IHttpContextAccessor HttpContextAccessor
-
-<AuthorizeView>
+﻿<AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity?.Name!
 
@@ -14,26 +12,38 @@
 
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
     private string logoutUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+        await SetLogoutUrl();
+    }
+
+    private async Task SetLogoutUrl()
+    {
+        if (authenticationState is not null)
         {
-            var scheme = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+            var authState = await authenticationState;
+            var user = authState?.User;
 
-            string domainUrl = HttpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContextAccessor.HttpContext.Request.Host;
-
-            switch (scheme)
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
             {
-                case Program.B2cOpenIdConnectScheme:
-                    logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.B2cOpenIdConnectScheme}";
-                    break;
-                case Program.AadOpenIdConnectScheme:
-                    logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.AadOpenIdConnectScheme}";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scheme));
+                var scheme = user.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+
+                switch (scheme)
+                {
+                    case Program.B2cOpenIdConnectScheme:
+                        logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.B2cOpenIdConnectScheme}";
+                        break;
+                    case Program.AadOpenIdConnectScheme:
+                        logoutUrl = $"/MicrosoftIdentity/Account/SignOut/{Program.AadOpenIdConnectScheme}";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(scheme));
+                }
             }
         }
     }

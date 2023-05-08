@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.Api1", "Authn.Sample.Api1\Authn.Sample.Api1.csproj", "{8BEB6B68-7D5E-4498-8756-9DA47B01EF21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authn.Sample.Api1", "Authn.Sample.Api1\Authn.Sample.Api1.csproj", "{8BEB6B68-7D5E-4498-8756-9DA47B01EF21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.Api2", "Authn.Sample.Api2\Authn.Sample.Api2.csproj", "{040D9FE0-0C1A-49EC-B510-821001098F20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authn.Sample.Api2", "Authn.Sample.Api2\Authn.Sample.Api2.csproj", "{040D9FE0-0C1A-49EC-B510-821001098F20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.BlazorServer", "Authn.Sample.BlazorServer\Authn.Sample.BlazorServer.csproj", "{443FA417-3644-4A89-9C1E-D7C4FE2682BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authn.Sample.BlazorServer", "Authn.Sample.BlazorServer\Authn.Sample.BlazorServer.csproj", "{443FA417-3644-4A89-9C1E-D7C4FE2682BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authn.Sample.BlazorServer.MultipleAuthSchemes", "Authn.Sample.BlazorServer.MultipleAuthSchemes\Authn.Sample.BlazorServer.MultipleAuthSchemes.csproj", "{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authn.Sample.BlazorServer.MultipleAuthSchemes", "Authn.Sample.BlazorServer.MultipleAuthSchemes\Authn.Sample.BlazorServer.MultipleAuthSchemes.csproj", "{FBA7741B-5D5F-4826-B6D7-E2A2721B5630}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

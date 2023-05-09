@@ -12,14 +12,16 @@ using Microsoft.Identity.Web.UI;
 namespace Authn.Sample.BlazorServer;
 public class Program
 {
+    public const string AadOpenIdConnectScheme = "OpenIdConnectAad"; // Custom scheme name gives problem
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-            .EnableTokenAcquisitionToCallDownstreamApi(new[] { "api://82a70ce5-4d9c-4f1c-a38e-f4b31099a913/access_as_user" })
+        builder.Services.AddAuthentication(Program.AadOpenIdConnectScheme) // Set the default scheme name
+            .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), Program.AadOpenIdConnectScheme) // Use a custom scheme name 
+            .EnableTokenAcquisitionToCallDownstreamApi()
             .AddDownstreamApi("DownstreamApi1", builder.Configuration.GetSection("DownstreamApi1"))
             .AddDownstreamApi("DownstreamApi2", builder.Configuration.GetSection("DownstreamApi2"))
                 .AddInMemoryTokenCaches();

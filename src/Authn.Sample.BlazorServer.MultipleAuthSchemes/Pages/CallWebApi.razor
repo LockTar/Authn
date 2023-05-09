@@ -5,6 +5,7 @@
 
 @using Microsoft.Identity.Abstractions;
 @using Microsoft.Identity.Web
+@using System.Security.Claims;
 
 @inject IDownstreamApi downstreamAPI
 @inject MicrosoftIdentityConsentAndConditionalAccessHandler ConsentHandler
@@ -41,23 +42,28 @@
     private string apiResult;
     private string apiResult2;
 
+    private ClaimsPrincipal user;
+    private string authScheme;
+
     protected override async Task OnInitializedAsync()
     {
         if (authenticationState is not null)
         {
             var authState = await authenticationState;
-            var user = authState?.User;
+            user = authState?.User;
 
             if (user?.Identity is not null && user.Identity.IsAuthenticated)
             {
                 try
                 {
+                    authScheme = user.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+
                     await CallApi();
                     await CallApi2();
                 }
                 catch (Exception ex)
-                {                    
-                    ConsentHandler.HandleException(ex);
+                {
+                    ConsentHandler.HandleException(ex); // Missing option to pass authScheme....
                 }
             }
         }
@@ -70,7 +76,7 @@
             options =>
             {
                 options.RelativePath = "";
-                options.AcquireTokenOptions.AuthenticationOptionsName = Program.AadOpenIdConnectScheme; // Doesn't help... Somewhere the custom scheme is ignored and wants to use the default 'OpenIdConnect'
+                options.AcquireTokenOptions.AuthenticationOptionsName = authScheme;
             });
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -90,7 +96,7 @@
             options =>
             {
                 options.RelativePath = "";
-                options.AcquireTokenOptions.AuthenticationOptionsName = Program.AadOpenIdConnectScheme; // Doesn't help... Somewhere the custom scheme is ignored and wants to use the default 'OpenIdConnect'
+                options.AcquireTokenOptions.AuthenticationOptionsName = authScheme;
             });
 
         if (response.StatusCode == System.Net.HttpStatusCode.OK)

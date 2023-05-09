@@ -21,7 +21,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // As described here: https://github.com/AzureAD/microsoft-identity-web/wiki/multiple-authentication-schemes#cookie-schemes
-        var authenticationBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme); 
+        var authenticationBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 
         authenticationBuilder.AddCookie(options =>
         {
@@ -65,7 +65,7 @@ public class Program
         builder.Services.AddAuthorization(options =>
         {
             // By default, all incoming requests will be authorized according to the default policy
-            options.FallbackPolicy = options.DefaultPolicy;
+            //options.FallbackPolicy = options.DefaultPolicy;
         });
 
         builder.Services.AddRazorPages();
@@ -88,6 +88,9 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
         app.MapBlazorHub();

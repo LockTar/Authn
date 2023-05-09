@@ -1,6 +1,7 @@
 @page "/callwebapi"
 @*@attribute [AuthorizeForScopes(ScopeKeySection = "CalledApi:Scopes", AuthenticationScheme = Program.AadOpenIdConnectScheme)]*@
 @*@attribute [Authorize(AuthenticationSchemes = Program.AadOpenIdConnectScheme)]*@
+@*@attribute [Authorize]*@
 
 @using Microsoft.Identity.Abstractions;
 @using Microsoft.Identity.Web
@@ -8,38 +9,57 @@
 @inject IDownstreamApi downstreamAPI
 @inject MicrosoftIdentityConsentAndConditionalAccessHandler ConsentHandler
 
-<h1>Call an API</h1>
+<AuthorizeView>
+    <Authorized>
+        <h1>Call an API</h1>
 
-<p>This component demonstrates fetching data from a Web API.</p>
+        <p>This component demonstrates fetching data from a Web API.</p>
 
-@if (apiResult == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <h2>API Result</h2>
-    @apiResult
+        @if (apiResult == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <h2>API Result</h2>
+            @apiResult
 
-    <h2>API Result2</h2>
-    @apiResult2
-}
+            <h2>API Result2</h2>
+            @apiResult2
+        }
+    </Authorized>
+    <NotAuthorized>
+        <FirstLogin></FirstLogin>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
     private HttpResponseMessage response;
     private string apiResult;
     private string apiResult2;
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        if (authenticationState is not null)
         {
-            await CallApi();
-            await CallApi2();
-        }
-        catch (Exception ex)
-        {
-            ConsentHandler.HandleException(ex);
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    await CallApi();
+                    await CallApi2();
+                }
+                catch (Exception ex)
+                {                    
+                    ConsentHandler.HandleException(ex);
+                }
+            }
         }
     }
 
